@@ -1,0 +1,7 @@
+.vscode/*
+coverage/*
+dist/*
+docs/*
+jest.config.js
+node_modules/*
+test-data.ts

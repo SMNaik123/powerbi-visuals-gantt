@@ -79,10 +79,9 @@ import PrimitiveType = valueType.PrimitiveType;
 import ValueType = valueType.ValueType;
 
 // powerbi.extensibility.utils.formatting
-import { textMeasurementService as tms, valueFormatter as ValueFormatter } from "powerbi-visuals-utils-formattingutils";
-import TextProperties = tms.TextProperties;
+import { textMeasurementService, valueFormatter as ValueFormatter, interfaces } from "powerbi-visuals-utils-formattingutils";
+import TextProperties = interfaces.TextProperties;
 import IValueFormatter = ValueFormatter.IValueFormatter;
-import textMeasurementService = tms.textMeasurementService;
 
 // powerbi.extensibility.utils.interactivity
 import { interactivityBaseService as interactivityService, interactivitySelectionService } from "powerbi-visuals-utils-interactivityutils";
@@ -653,6 +652,7 @@ export class Gantt implements IVisual {
     * @param dataView
     */
     private static isChartHasTask(dataView: DataView): boolean {
+        console.log(dataView)
         if (dataView.metadata &&
             dataView.metadata.columns) {
             for (let column of dataView.metadata.columns) {
@@ -2047,6 +2047,7 @@ export class Gantt implements IVisual {
      * @param taskClicked Grouped clicked task
      */
     private subTasksCollapseCb(taskClicked: GroupedTask): void {
+        console.log("subTasksCollapseCb", taskClicked)
         const taskIsChild: boolean = taskClicked.tasks[0].parent && !taskClicked.tasks[0].children;
         const taskWithoutParentAndChildren: boolean = !taskClicked.tasks[0].parent && !taskClicked.tasks[0].children;
         if (taskIsChild || taskWithoutParentAndChildren) {
@@ -2078,6 +2079,8 @@ export class Gantt implements IVisual {
         const collapsedAllSelector = this.collapseAllGroup.select(Selectors.CollapseAllArrow.selectorName);
         const isCollapsed: string = collapsedAllSelector.attr(this.collapseAllFlag);
         const buttonExpandCollapseColor = this.colorHelper.getHighContrastColor("foreground", Gantt.DefaultValues.CollapseAllColor);
+
+        console.log("subTasksCollapseAll", isCollapsed, collapsedAllSelector)
 
         collapsedAllSelector.selectAll("path").remove();
         if (isCollapsed === "1") {
@@ -2341,7 +2344,13 @@ export class Gantt implements IVisual {
         let taskMilestones: Selection<any> = taskSelection
             .selectAll(Selectors.TaskMilestone.selectorName)
             .data((d: Task) => {
-                const nestedByDate = d3.nest().key((d: Milestone) => d.start.toDateString()).entries(d.Milestones);
+                const nestedByDate = Array.from(d3.group(d.Milestones, (d) => d.start.toDateString())).map(a => {
+                    return {
+                      key: a[0],
+                      values: a[1]
+                      }
+                  })
+                //const nestedByDate1 = d3.nest().key((d: Milestone) => d.start.toDateString()).entries(d.Milestones);
                 let updatedMilestones: MilestonePath[] = nestedByDate.map((nestedObj) => {
                     const oneDateMilestones = nestedObj.values;
                     // if there 2 or more milestones for concrete date => draw only one milestone for concrete date, but with tooltip for all of them
@@ -2901,10 +2910,7 @@ export class Gantt implements IVisual {
             .attr("y1", (line: Line) => line.y1)
             .attr("x2", (line: Line) => line.x2)
             .attr("y2", (line: Line) => line.y2)
-            .style("stroke", (line: Line) => {
-                let color = line.x1 === this.timeScale(timestamp) ? todayColor : Gantt.DefaultValues.MilestoneLineColor;
-                return this.colorHelper.getHighContrastColor("foreground", color);
-            });
+            .style("stroke", "none");
 
         this.renderTooltip(chartLineSelectionMerged);
 

@@ -39,8 +39,6 @@ import { IBehaviorOptions } from "powerbi-visuals-utils-interactivityutils/lib/i
 export const DimmedOpacity: number = 0.4;
 export const DefaultOpacity: number = 1.0;
 
-const getEvent = () => require("d3-selection").event;
-
 export function getFillOpacity(
     selected: boolean,
     highlight: boolean,
@@ -76,23 +74,21 @@ export class Behavior implements IInteractiveBehavior {
         this.options = options;
         let clearCatcher = options.clearCatcher;
 
-        options.taskSelection.on("click", (dataPoint: Task) => {
-            const event: MouseEvent = d3.event as MouseEvent;
+        options.taskSelection.on("click", (event: MouseEvent, dataPoint: Task) => {
             selectionHandler.handleSelection(dataPoint, event.ctrlKey);
-
             event.stopPropagation();
         });
 
-        options.legendSelection.on("click", (d: any) => {
+        options.legendSelection.on("click", (event: MouseEvent, d: any) => {
             if (!d.selected) {
 
-                selectionHandler.handleSelection(d, getEvent().ctrlKey);
-                (d3.event as MouseEvent).stopPropagation();
+                selectionHandler.handleSelection(d, event.ctrlKey);
+                event.stopPropagation();
 
                 let selectedType: string = d.tooltip;
                 options.taskSelection.each((d: Task) => {
                     if (d.taskType === selectedType && d.parent && !d.selected) {
-                        selectionHandler.handleSelection(d, getEvent().ctrlKey);
+                        selectionHandler.handleSelection(d, event.ctrlKey);
                     }
                 });
             } else {
@@ -100,17 +96,17 @@ export class Behavior implements IInteractiveBehavior {
             }
         });
 
-        options.subTasksCollapse.selection.on("click", (d: GroupedTask) => {
+        options.subTasksCollapse.selection.on("click", (event: MouseEvent, d: GroupedTask) => {
             if (!_.flatten(d.tasks.map(task => task.children)).length) {
                 return;
             }
 
-            (d3.event as MouseEvent).stopPropagation();
+            event.stopPropagation();
             options.subTasksCollapse.callback(d);
         });
 
-        options.allSubtasksCollapse.selection.on("click", () => {
-            (d3.event as MouseEvent).stopPropagation();
+        options.allSubtasksCollapse.selection.on("click", (event: MouseEvent,) => {
+            event.stopPropagation();
             options.allSubtasksCollapse.callback();
         });
 

@@ -1,0 +1,43 @@
+{
+  "root": true,
+
+  "parser": "@typescript-eslint/parser",
+
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+
+  "plugins": ["@typescript-eslint"],
+
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
+
+  "rules": {
+    "@typescript-eslint/method-signature-style": ["error", "method"],
+    "@typescript-eslint/naming-convention": ["error"],
+    "@typescript-eslint/no-confusing-non-null-assertion": ["error"],
+    "@typescript-eslint/no-duplicate-enum-values": ["error"],
+    "@typescript-eslint/no-dynamic-delete": ["error"]
+  },
+
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+
+  "overrides": [
+    {
+      "files": ["**/scripts/**/*"],
+      "env": {
+        "node": true
+      }
+    },
+    {
+      "files": ["**/__tests__/**/*", "**/*.spec.ts"],
+      "env": {
+        "node": true,
+        "jest": true
+      }
+    }
+  ]
+}

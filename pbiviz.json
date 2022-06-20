@@ -1,7 +1,7 @@
 {
   "visual": {
     "name": "Gantt",
-    "displayName": "Gantt 2.2.3",
+    "displayName": "Gantt Custom",
     "guid": "Gantt1448688115699",
     "visualClassName": "Gantt",
     "version": "2.2.3",
@@ -9,7 +9,7 @@
     "supportUrl": "https://community.powerbi.com",
     "gitHubUrl": "https://github.com/Microsoft/powerbi-visuals-gantt"
   },
-  "apiVersion": "2.6.0",
+  "apiVersion": "3.8.0",
   "author": {
     "name": "Microsoft",
     "email": "pbicvsupport@microsoft.com"
